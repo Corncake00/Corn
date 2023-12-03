@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>8 Puzzle</title>
+    <style>
+        /* Add CSS styles here */
+        /* Example styles, customize as needed */
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+        }
+        .tile {
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        #code {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="puzzle-container" id="puzzle-container">
+        <!-- Puzzle tiles with letters -->
+        <div class="tile" id="tile-a">He</div>
+        <div class="tile" id="tile-b">B</div>
+        <div class="tile" id="tile-c">C</div>
+        <div class="tile" id="tile-d">H</div>
+        <div class="tile" id="tile-e">As</div>
+        <div class="tile" id="tile-f">Te</div>
+        <div class="tile" id="tile-g">Rb</div>
+        <div class="tile" id="tile-h">K</div>
+        <div class="tile" id="tile-blank"></div>
+    </div>
+    <div id="code"></div>
+    <button onclick="resetPuzzle()">Reset Puzzle</button>
+    <script>
+        // Get references to the tiles
+        const tiles = document.querySelectorAll('.tile');
+        let blankTile;
+
+        // Store the initial order of tiles
+        const initialOrder = Array.from(tiles).map(tile => tile.textContent);
+
+        // Find and store the blank tile
+        tiles.forEach(tile => {
+            if (tile.textContent === '') {
+                blankTile = tile;
+            }
+        });
+
+        // Function to handle tile movement
+        function moveTile(direction) {
+            const currentIndex = Array.from(tiles).indexOf(blankTile);
+            let targetIndex;
+
+            // Calculate the target index based on the direction
+            switch (direction) {
+                case 'w':
+                    targetIndex = currentIndex + 3;
+                    break;
+                case 's':
+                    targetIndex = currentIndex - 3;
+                    break;
+                case 'a':
+                    targetIndex = currentIndex + 1;
+                    break;
+                case 'd':
+                    targetIndex = currentIndex - 1;
+                    break;
+                default:
+                    return; // Do nothing for other keys
+            }
+
+            // Check if the target index is valid
+            if (targetIndex >= 0 && targetIndex < tiles.length &&
+                !(currentIndex % 3 === 0 && direction === 'd') &&
+                !(currentIndex % 3 === 2 && direction === 'a')) {
+                // Swap the blank tile with the target tile
+                const targetTile = tiles[targetIndex];
+                blankTile.textContent = targetTile.textContent;
+                targetTile.textContent = '';
+                blankTile = targetTile;
+
+                // Check if the specific state is achieved
+                checkSpecificState();
+            }
+        }
+
+        // Event listener for key presses
+        document.addEventListener('keydown', event => {
+            const key = event.key.toLowerCase();
+            if (key === 'r') {
+                resetPuzzle();
+            } else {
+                moveTile(key);
+            }
+        });
+
+        // Reset function to restore the initial order
+        function resetPuzzle() {
+            tiles.forEach((tile, index) => {
+                tile.textContent = initialOrder[index];
+            });
+            blankTile = document.getElementById('tile-blank');
+            document.getElementById('code').textContent = 'Locked'; // Reset code display
+        }
+
+        // Check if the specific state is achieved and display the code or "Locked"
+        function checkSpecificState() {
+            const positions = {
+                a: 0,
+                f: 5,
+                h: 7
+            };
+
+            const currentPositions = {
+                a: Array.from(tiles).indexOf(document.getElementById('tile-a')),
+                f: Array.from(tiles).indexOf(document.getElementById('tile-f')),
+                h: Array.from(tiles).indexOf(document.getElementById('tile-h'))
+            };
+
+            if (
+                currentPositions.a === positions.a &&
+                currentPositions.f === positions.f &&
+                currentPositions.h === positions.h
+            ) {
+                document.getElementById('code').textContent = '43';
+            } else {
+                document.getElementById('code').textContent = '43';
+            }
+        }
+    </script>
+	<h1 style="font-size:60px;"><center>Exhibit A </center></h1><br><h2><center>Your director tells you that:
+ <br>
+  1. The atom with the smallest atomic radius should be in the bottom-right&nbsp;<br>
+  2. the atom with the largest atomic radius should be in the top left&nbsp; <br>
+   3. the element with the largest ionic radius should be in the bottom-left<br> 
+   Use "wasd" to move the puzzle, tell your director when you have the correct formation to recieve the first part of the final code.
+    </center></h2>
+</body>
+</html>
